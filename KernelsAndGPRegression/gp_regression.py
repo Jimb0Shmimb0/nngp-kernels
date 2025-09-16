@@ -9,8 +9,9 @@ from CosineActivationKernel import CosineActivationKernel
 f = lambda x: x * np.sin(x)
 
 def plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, kernel_type):
+    string_rep = inspect.getsourcelines(f)[0][0].split(':')[1].strip()
+
     plt.close()
-    string_rep = inspect.getsourcelines(f)[0][0]
     plt.plot(X, f(X), label=f"{string_rep}", linestyle="dotted")
     plt.scatter(X_train, y_train, label="Observations")
     plt.plot(X, mean_prediction, label="Mean prediction")
@@ -24,14 +25,17 @@ def plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, kern
     plt.legend()
     plt.xlabel("$x$")
     plt.ylabel("$f(x)$")
-    _ = plt.title(f"Gaussian process regression on noise-free dataset \n using {kernel_type} kernel")
-    plt.savefig(f'output/gp_reg_{kernel_type}.png')
+    _ = plt.title(f"Gaussian process regression on noise-free dataset \n "
+                  f"using {kernel_type} kernel")
+    plt.savefig(f'output/gp_reg_{kernel_type.lower().replace(" ", "_")}.png')
 
 def generate_and_plot_data(X, f):
-    y = np.squeeze(f(X))  # create Y by applying f(x), then flatten
+    # noise_std = 0.75
+    y = np.squeeze(f(X)) # + rng.normal(loc=0.0, scale=noise_std, size=y_train.shape)
+    # create Y by applying f(x), then flatten
+    string_rep = inspect.getsourcelines(f)[0][0].split(':')[1].strip()
 
     plt.close()
-    string_rep = inspect.getsourcelines(f)[0][0]
     plt.plot(X, y, label=f"{string_rep}", linestyle="dotted")
     plt.legend()
     plt.xlabel("$x$")
@@ -51,7 +55,6 @@ def generate_and_plot_data(X, f):
 #########
 
 X = np.linspace(start=0, stop=10, num=1_000).reshape(-1, 1) # 1000 evenly spaced points between 0 and 10. Shape: (1000x1)
-
 X_train, y_train = generate_and_plot_data(X, f)
 
 #########
@@ -62,7 +65,7 @@ X_train, y_train = generate_and_plot_data(X, f)
 rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
 
 # get GP regressor and fit to training data
-rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9)
+rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9) # alpha=noise_std**2
 rbf_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
@@ -83,5 +86,5 @@ cos_gaussian_process = GaussianProcessRegressor(kernel=cosine_activation_kernel)
 cos_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
-mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True)
+mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine activation")

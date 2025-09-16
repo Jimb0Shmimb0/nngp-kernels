@@ -3,13 +3,14 @@ from sklearn.gaussian_process.kernels import Kernel
 from sklearn.utils.validation import check_array
 
 class CosineActivationKernel(Kernel):
-    """Custom kernel: exp(-0.5(||x1||^2 + ||x2||^2)) * cosh(x1^T x2)."""
+    """Kernel definition: exp(-0.5(||x1||^2 + ||x2||^2)) * cosh(x1^T x2)."""
 
     def __init__(self):
-        # There are no tunable hyperparameters for now
+        # There are no tunable hyperparameters. Just pass
         pass
 
     def __call__(self, X, Y=None, eval_gradient=False):
+        # Check X and Y are arrays
         X = check_array(X)
         if Y is None:
             Y = X
@@ -27,15 +28,16 @@ class CosineActivationKernel(Kernel):
         K = np.exp(-0.5 * (X_norm + Y_norm)) * np.cosh(X_dot_Y)
 
         if eval_gradient:
-            # No hyperparameters → return gradient of shape (n_samples, n_samples, 0)
+            # No hyperparameters, so just return gradient of shape (n_samples, n_samples, 0)
             return K, np.empty((X.shape[0], Y.shape[0], 0))
 
         return K
 
     def diag(self, X):
-        # Diagonal entries K(x,x)
-        return np.ones(X.shape[0])
+        # Get the diagonal elements
+        norms = np.sum(X ** 2, axis=1)
+        return np.exp(-norms) * np.cosh(norms)
 
     def is_stationary(self):
-        # Depends on absolute positions (via norms), so not stationary
+        # Depends on absolute positions through norms, so not stationary
         return False
