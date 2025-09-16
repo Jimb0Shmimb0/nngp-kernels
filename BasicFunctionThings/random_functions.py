@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 """
-Functions used: 
+functions used: 
 
 np.linspace(start=a, stop=b, num=n)
     Creates an array of values in range [a, b] of size n, where each value is evenly spaced out.
@@ -50,25 +50,9 @@ def sample_neuralnet(num_samples=5):
     plt.savefig('neuralnet.png')
     plt.close()
 
-
-#sample_linear()
-#sample_neuralnet()
-
-x_eval = np.linspace(-3, 3, 100)
-w = np.random.normal(0, 1, 1)
-f = w*x_eval
-print(x_eval.shape)
-print(w.shape)
-print(f.shape)
-print(np.random.normal(0, 1, (10, 1)).shape)
+sample_linear()
+sample_neuralnet()
 
 
-print("################################")
-x_eval = np.linspace(-3, 3, 100).reshape((1,100))
-w1 = np.random.normal(0, 1, (10, 1))
-w2 = np.random.normal(0, 1, (1, 10))
-print(x_eval.shape)
-print(w1.shape)
-print(w2.shape)
 
-print((w1 @ x_eval).shape)
+
