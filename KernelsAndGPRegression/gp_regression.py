@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 from CosineActivationKernel import CosineActivationKernel
+from KernelsAndGPRegression.FiniteCosineActivationKernel import FiniteCosineActivationKernel
 
 f = lambda x: x * np.sin(x)
 
@@ -88,3 +89,21 @@ cos_gaussian_process.fit(X_train, y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine activation")
+
+
+
+
+########
+# FINITE COSINE ACTIVATION KERNEL TEST
+########
+
+# define kernel
+finite_cosine_activation_kernel = FiniteCosineActivationKernel()
+
+# get GP regressor and fit to training data
+f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activation_kernel)
+f_cos_gaussian_process.fit(X_train, y_train)
+
+# Get the mean and std prediction and plot the resulting gp regression
+mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
+plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Cosine activation")
