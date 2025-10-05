@@ -98,7 +98,7 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine 
 ########
 
 # define kernel
-finite_cosine_activation_kernel = FiniteCosineActivationKernel()
+finite_cosine_activation_kernel = FiniteCosineActivationKernel(X)
 
 # get GP regressor and fit to training data
 f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activation_kernel)

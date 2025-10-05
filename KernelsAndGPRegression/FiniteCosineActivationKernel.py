@@ -12,25 +12,18 @@ class FiniteCosineActivationKernel(Kernel):
     note dim_x is the number of features
     """
 
-    def __init__(self, num_random_features=100, random_state=None):
+    def __init__(self, X, num_random_features=100, random_state=None):
         self.num_random_features = num_random_features
         self.random_state = random_state
-        self.W = None
 
-    def _sample_weights(self, input_dim):
-        """Sample Gaussian weights if not already set (or dimension changes)."""
-        rng = np.random.RandomState(self.random_state) # <-- fix
-        if self.W is None or self.W.shape[1] != input_dim:
-            self.W = rng.normal(
-                loc=0.0,
-                scale=1.0,
-                size=(self.num_random_features, input_dim)
-            ) # w_i \sim \mathcal{N}(0, I)
+        self.W = np.random.RandomState(self.random_state).normal(
+            loc=0.0,
+            scale=1.0,
+            size=(self.num_random_features, X.shape[1])
+        )  # w_i \sim \mathcal{N}(0, I)
 
-    def _features(self, X):
-        """Compute finite feature mapping: cos(Wx)."""
-        self._sample_weights(X.shape[1])
-        return np.cos(X @ self.W.T)
+        # Note: If we want weights to be initialised during instantiation of this kernel, input X has to be passed in
+        # W needs to match the shape of X.
 
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
@@ -40,8 +33,8 @@ class FiniteCosineActivationKernel(Kernel):
         else:
             Y = check_array(Y)
 
-        Phi_X = self._features(X)
-        Phi_Y = self._features(Y)
+        Phi_X = np.cos(X @ self.W.T)
+        Phi_Y = np.cos(Y @ self.W.T)
 
         # Compute inner product in the feature space, then divide by 1/m
         K = (Phi_X @ Phi_Y.T) / self.num_random_features
@@ -54,8 +47,9 @@ class FiniteCosineActivationKernel(Kernel):
 
     def diag(self, X):
         # Get the diagonal elements
-        Phi_X = self._features(check_array(X))
+        Phi_X = np.cos(check_array(X) @ self.W.T)
         return np.sum(Phi_X**2, axis=1) / self.num_random_features
 
     def is_stationary(self):
-        return True # why????????
+        # Does not depend on absolute positions!
+        return True
