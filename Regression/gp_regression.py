@@ -119,7 +119,7 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite 
 finite_tanh_activation_kernel = FiniteTanhActivationKernel(X)
 
 # get GP regressor and fit to training data
-f_tanh_gaussian_process = GaussianProcessRegressor(kernel=finite_tanh_activation_kernel, alpha=1) # Too much noise. Fix
+f_tanh_gaussian_process = GaussianProcessRegressor(kernel=finite_tanh_activation_kernel) # Too much noise. Fix
 f_tanh_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
