@@ -25,6 +25,8 @@ class FiniteCosineActivationKernel(Kernel):
         # Note: If we want weights to be initialised during instantiation of this kernel, input X has to be passed in
         # W needs to match the shape of X.
 
+        self.X = X
+
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
         X = check_array(X)

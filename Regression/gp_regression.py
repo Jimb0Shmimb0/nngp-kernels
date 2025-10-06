@@ -106,7 +106,7 @@ f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activatio
 f_cos_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
-mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
+mean_prediction, std_prediction = f_cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Cosine activation")
 
 
@@ -114,13 +114,15 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite 
 # FINITE TANH ACTIVATION KERNEL TEST
 ########
 
+# TODO: Kernel is not returning a positive definite matrix. Fix please!
 # define kernel
 finite_tanh_activation_kernel = FiniteTanhActivationKernel(X)
 
 # get GP regressor and fit to training data
-f_tanh_gaussian_process = GaussianProcessRegressor(kernel=finite_tanh_activation_kernel)
+f_tanh_gaussian_process = GaussianProcessRegressor(kernel=finite_tanh_activation_kernel, alpha=1) # Too much noise. Fix
 f_tanh_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
-mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
+mean_prediction, std_prediction = f_tanh_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Tanh activation")
+

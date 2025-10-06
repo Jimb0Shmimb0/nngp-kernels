@@ -19,7 +19,7 @@ class FiniteTanhActivationKernel(Kernel):
         self.num_random_features = num_random_features
         self.random_state = random_state
 
-        self.W = self.random_state.normal(
+        self.W = np.random.RandomState(self.random_state).normal(
             loc=0.0,
             scale=1.0,
             size=(self.num_random_features, X.shape[1])
@@ -27,6 +27,8 @@ class FiniteTanhActivationKernel(Kernel):
 
         # Note: If we want weights to be initialised during instantiation of this kernel, input X has to be passed in
         # W needs to match the shape of X.
+
+        self.X = X
 
     def _estimate_kernel(self, x1, x2):
         """ Estimate k(x1, x2) using the law of large numbers """
@@ -38,8 +40,17 @@ class FiniteTanhActivationKernel(Kernel):
         ])
 
         # Sample num_random_features amount of Z's and L's
-        Z_samples = self.random_state.multivariate_normal(mean=[0, 0], cov=cov, size=self.num_random_features)
-        L_samples = self.random_state.logistic(loc=0.0, scale=0.5, size=(self.num_random_features, 2))
+        Z_samples = np.random.RandomState(self.random_state).multivariate_normal(
+            mean=[0, 0],
+            cov=cov,
+            size=self.num_random_features
+        )
+
+        L_samples = np.random.RandomState(self.random_state).logistic(
+            loc=0.0,
+            scale=0.5,
+            size=(self.num_random_features, 2)
+        )
 
         # Find probabilities
         probs = (L_samples[:, 0] <= Z_samples[:, 0]) & (L_samples[:, 1] <= Z_samples[:, 1])
