@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
-from Kernels.Cosine.FiniteCosineActivationKernel import FiniteCosineActivationKernel
+from Kernels.Cosine.NeuralCosineActivationKernel import FiniteCosineActivationKernel
 
 
 ########

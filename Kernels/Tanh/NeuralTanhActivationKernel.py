@@ -15,7 +15,7 @@ class FiniteTanhActivationKernel(Kernel):
     Approximate using num_random_features samples.
     """
 
-    def __init__(self, X, num_random_features=2000, random_state=None):
+    def __init__(self, X, num_random_features=20000, random_state=None):
         self.num_random_features = num_random_features
         self.random_state = random_state
 
@@ -37,9 +37,10 @@ class FiniteTanhActivationKernel(Kernel):
         Z_1 = X @ self.W.T  # shape (num_samples_X x num_random_features)
         Z_2 = Y @ self.W.T  # shape (num_samples_Y x num_random_features)
 
-        # Get samples for L_1 and L_2
-        L_1 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_1.shape) #TODO: SAMPLE ONCE!! PUT IN INIT
-        L_2 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_2.shape) #TODO: SAMPLE ONCE!! PUT IN INIT
+        # Get samples for L_1 and L_2 for each random feature
+        L = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=(self.num_random_features,))
+        L_1 = np.ones(Z_1.shape) * L
+        L_2 = np.ones(Z_2.shape) * L
 
         # Compute boolean matrix: (Lx <= Z) & (Ly <= YZ)
         # k(x1, x2) = 4 * E[1(L <= Z) 1(L' <= Z')] - 1
@@ -54,7 +55,12 @@ class FiniteTanhActivationKernel(Kernel):
 
         # Average across the random features dimension, obtaining K of size (num_samples_X, num_samples_Y)
         K = 4.0 * np.mean(probabilities, axis=2) - 1.0 # Axis = 2 means we iterate over the random features
-        return 0.5 * (K + K.T)
+
+
+        if X.shape == Y.shape:
+            K = 0.5 * (K + K.T)
+
+        return K
 
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
