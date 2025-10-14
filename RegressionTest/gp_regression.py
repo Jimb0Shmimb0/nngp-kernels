@@ -66,7 +66,7 @@ X_train, y_train = generate_and_plot_data(X, f)
 # define kernel
 rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
 
-# get GP regressor and fit to training data
+# get GP regressor and fit to training data_utils
 rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9) # alpha=noise_std**2
 rbf_gaussian_process.fit(X_train, y_train)
 
@@ -83,7 +83,7 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "RBF")
 # define kernel
 cosine_activation_kernel = CosineActivationKernel()
 
-# get GP regressor and fit to training data
+# get GP regressor and fit to training data_utils
 cos_gaussian_process = GaussianProcessRegressor(kernel=cosine_activation_kernel)
 cos_gaussian_process.fit(X_train, y_train)
 
@@ -101,7 +101,7 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine 
 # define kernel
 finite_cosine_activation_kernel = FiniteCosineActivationKernel(X)
 
-# get GP regressor and fit to training data
+# get GP regressor and fit to training data_utils
 f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activation_kernel)
 f_cos_gaussian_process.fit(X_train, y_train)
 
@@ -118,7 +118,7 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite 
 # define kernel
 finite_tanh_activation_kernel = FiniteTanhActivationKernel(X)
 
-# get GP regressor and fit to training data
+# get GP regressor and fit to training data_utils
 f_tanh_gaussian_process = GaussianProcessRegressor(kernel=finite_tanh_activation_kernel, alpha=1e-4) # Too much noise. Fix
 f_tanh_gaussian_process.fit(X_train, y_train)
 

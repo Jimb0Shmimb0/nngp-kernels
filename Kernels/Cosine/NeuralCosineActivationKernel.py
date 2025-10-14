@@ -3,7 +3,7 @@ from sklearn.gaussian_process.kernels import Kernel
 from sklearn.utils.validation import check_array
 
 
-class FiniteCosineActivationKernel(Kernel):
+class NeuralCosineActivationKernel(Kernel):
     """
     Finite-dimensional approximation for kernel definition: exp(-0.5(||x1||^2 + ||x2||^2)) * cosh(x1^T x2).
 

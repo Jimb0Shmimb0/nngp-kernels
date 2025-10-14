@@ -4,7 +4,7 @@ from sklearn.utils.validation import check_array
 from scipy.stats import logistic, multivariate_normal
 
 
-class FiniteTanhActivationKernel(Kernel):
+class NeuralTanhActivationKernel(Kernel):
     """
     Finite-dimensional approximation for tanh activation kernel:
         k(x1, x2) = 4 * P(L <= Z, L' <= Z') - 1
