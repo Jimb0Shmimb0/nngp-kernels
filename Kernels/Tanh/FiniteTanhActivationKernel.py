@@ -38,8 +38,8 @@ class FiniteTanhActivationKernel(Kernel):
         Z_2 = Y @ self.W.T  # shape (num_samples_Y x num_random_features)
 
         # Get samples for L_1 and L_2
-        L_1 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_1.shape)
-        L_2 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_2.shape)
+        L_1 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_1.shape) #TODO: SAMPLE ONCE!! PUT IN INIT
+        L_2 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=Z_2.shape) #TODO: SAMPLE ONCE!! PUT IN INIT
 
         # Compute boolean matrix: (Lx <= Z) & (Ly <= YZ)
         # k(x1, x2) = 4 * E[1(L <= Z) 1(L' <= Z')] - 1
@@ -54,7 +54,7 @@ class FiniteTanhActivationKernel(Kernel):
 
         # Average across the random features dimension, obtaining K of size (num_samples_X, num_samples_Y)
         K = 4.0 * np.mean(probabilities, axis=2) - 1.0 # Axis = 2 means we iterate over the random features
-        return K
+        return 0.5 * (K + K.T)
 
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
@@ -75,11 +75,14 @@ class FiniteTanhActivationKernel(Kernel):
         return np.ones(X.shape[0])
 
     def is_stationary(self):
-        return True # Need to confirm. Why is it stationary?
+        return False # Need to confirm. Why is it stationary?
 
 
 
 # OLD:
+
+
+# Finite: Neural network
 
 """
 class FiniteTanhActivationKernel(Kernel):
