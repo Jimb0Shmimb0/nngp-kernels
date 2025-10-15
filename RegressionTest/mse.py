@@ -36,7 +36,7 @@ x1 = np.array([0.5, 0.8])
 x2 = np.array([0.1, -0.4])
 
 # Sample sizes
-m_values = np.logspace(1, 6, 50, dtype=int)
+m_values = np.logspace(0, 6, 50, dtype=int)
 mse_values = mean_square_error_from_kernels(x1, x2, m_values, num_trials=100)
 
 # Plot convergence

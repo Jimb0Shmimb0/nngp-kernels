@@ -10,9 +10,22 @@ from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Kin8nm
 from experiment_utils import evaluate_gp_predictions
 import matplotlib.pyplot as plt
 
+
+DATASETS = {
+    "Boston": Boston,
+    "Concrete": Concrete,
+    "Energy": Energy,
+    "Kin8nm": Kin8nm,
+    "Naval": Naval,
+    "Power": Power,
+    "Protein": Protein,
+    "Wine": Wine,
+    "Yacht": Yacht,
+}
+
 # Choose dataset
 data_dir = os.path.join(os.path.dirname(os.getcwd()), "datasets")
-dataset = Boston(out_dir=data_dir)
+dataset = Concrete(out_dir=data_dir)
 X_train, Y_train, X_test, Y_test = dataset.load_or_generate_data()
 
 # Define data "unstandardising" function
@@ -20,7 +33,7 @@ unstandardise = lambda x : (x * dataset.Y_std) + dataset.Y_mean
 Y_test_original = unstandardise(Y_test)
 
 # Define noise variance constant alpha
-ALPHA = 1e-4
+ALPHA = 1e-4 # can be higher up to 0.1
 
 #########
 # RBF KERNEL
@@ -36,9 +49,6 @@ rbf_gaussian_process.fit(X_train, Y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 rbf_mean_prediction, rbf_std_prediction = rbf_gaussian_process.predict(X_test, return_std=True)
 
-# Unstandardise the data
-raw_Y_prediction_rbf = unstandardise(rbf_mean_prediction)
-
 ########
 # COSINE ACTIVATION KERNEL
 ########
@@ -53,10 +63,6 @@ cos_gaussian_process.fit(X_train, Y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 cos_mean_prediction, cos_std_prediction = cos_gaussian_process.predict(X_test, return_std=True)
 
-# Unstandardise the data
-raw_Y_prediction_cos = unstandardise(cos_mean_prediction)
-
-
 ########
 # NEURAL NETWORK COSINE ACTIVATION KERNEL
 ########
@@ -69,16 +75,13 @@ f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activatio
 f_cos_gaussian_process.fit(X_train, Y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
-neural_cos_mean_prediction, neural_std_prediction = f_cos_gaussian_process.predict(X_test, return_std=True)
-
-# Unstandardise the data
-raw_Y_prediction_neural_cos = unstandardise(neural_cos_mean_prediction)
+neural_cos_mean_prediction, neural_cos_std_prediction = f_cos_gaussian_process.predict(X_test, return_std=True)
 
 
 ########
 # NEURAL NETWORK TANH ACTIVATION KERNEL
 ########
-"""
+
 # define kernel
 finite_tanh_activation_kernel = NeuralTanhActivationKernel(X_train)
 
@@ -89,39 +92,35 @@ f_tanh_gaussian_process.fit(X_train, Y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 neural_tanh_mean_prediction, neural_tanh_std_prediction = f_tanh_gaussian_process.predict(X_test, return_std=True)
 
-# Unstandardise the data
-raw_Y_prediction_neural_tanh = unstandardise(neural_tanh_mean_prediction)
-"""
+##########
+# ANALYSIS
+##########
 
 evaluate_gp_predictions(
     "RBF Kernel",
-    raw_Y_prediction_rbf,
-    rbf_mean_prediction,
-    rbf_std_prediction
+    Y_test_original,
+    unstandardise(rbf_mean_prediction),
 )
 
 evaluate_gp_predictions(
     "Cosine Activation Kernel",
-    raw_Y_prediction_cos,
-    cos_mean_prediction,
-    cos_std_prediction
+    Y_test_original,
+    unstandardise(cos_mean_prediction),
 )
 
 evaluate_gp_predictions(
     "Neural Cosine Activation Kernel",
-    raw_Y_prediction_neural_cos,
-    neural_cos_mean_prediction,
-    cos_std_prediction
+    Y_test_original,
+    unstandardise(neural_cos_mean_prediction),
 )
 
-"""
+
 evaluate_gp_predictions(
     "Neural Hyperbolic Tangent Activation Kernel",
-    raw_Y_prediction_neural_tanh,
-    neural_tanh_mean_prediction,
-    neural_tanh_std_prediction
+    Y_test_original,
+    unstandardise(neural_tanh_mean_prediction),
 )
-"""
+
 
 # TODO: Formalise tests. Move datasets to the datasets package. Fix the finite tanh kernel!!!!!!
 # TODO: Start writing up notes properly. Draft the presentation notes!

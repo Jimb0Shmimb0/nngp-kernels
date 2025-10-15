@@ -12,7 +12,7 @@ class NeuralCosineActivationKernel(Kernel):
     note dim_x is the number of features
     """
 
-    def __init__(self, X, num_random_features=100, random_state=None):
+    def __init__(self, X, num_random_features=20000, random_state=None):
         self.num_random_features = num_random_features
         self.random_state = random_state
 
