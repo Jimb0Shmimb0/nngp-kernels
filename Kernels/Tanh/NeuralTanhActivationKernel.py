@@ -29,18 +29,27 @@ class NeuralTanhActivationKernel(Kernel):
         # W needs to match the shape of X.
 
         self.X = X
+        print(f"[INIT] W.shape = {self.W.shape}")
+        print(f"[INIT] X.shape = {X.shape}")
+        print(f"[INIT] num_random_features = {self.num_random_features}")
 
     def _estimate_kernel_matrix(self, X, Y):
         """ Estimate the entire kernel matrix, using the law of large numbers """
+        print(f"\n[ESTIMATE] Called with X.shape={X.shape}, Y.shape={Y.shape}")
 
         # Compute Z_1 and Z_2
         Z_1 = X @ self.W.T  # shape (num_samples_X x num_random_features)
         Z_2 = Y @ self.W.T  # shape (num_samples_Y x num_random_features)
+        print(f"[ESTIMATE] Z_1.shape={Z_1.shape}, Z_2.shape={Z_2.shape}")
+        print(f"[ESTIMATE] Z_1 sample: {Z_1[0, :5] if Z_1.size > 0 else 'EMPTY'}")
 
         # Get samples for L_1 and L_2 for each random feature
         L = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=(self.num_random_features,))
         L_1 = np.ones(Z_1.shape) * L
         L_2 = np.ones(Z_2.shape) * L
+        print(f"[ESTIMATE] L.shape={L.shape}")
+        print(f"[ESTIMATE] L sample (first 5): {L[:5]} | mean={np.mean(L):.4f}, std={np.std(L):.4f}")
+        print(f"[ESTIMATE] L_1.shape={L_1.shape}, L_2.shape={L_2.shape}")
 
         # Compute boolean matrix: (Lx <= Z) & (Ly <= YZ)
         # k(x1, x2) = 4 * E[1(L <= Z) 1(L' <= Z')] - 1
@@ -52,12 +61,19 @@ class NeuralTanhActivationKernel(Kernel):
         # (1, num_samples_Y, num_random_features)
         # Broadcasting using & obtains a shape of (num_samples_X, num_samples_Y, num_features)
         probabilities = (L_1[:, None, :] <= Z_1[:, None, :]) & (L_2[None, :, :] <= Z_2[None, :, :])
+        print(f"[ESTIMATE] probabilities.shape={probabilities.shape}")
+        print(f"[ESTIMATE] probabilities dtype={probabilities.dtype}")
+        print(f"[ESTIMATE] probabilities mean={np.mean(probabilities):.4f}")
 
         # Average across the random features dimension, obtaining K of size (num_samples_X, num_samples_Y)
         K = 4.0 * np.mean(probabilities, axis=2) - 1.0 # Axis = 2 means we iterate over the random features
+        print(f"[ESTIMATE] K.shape={K.shape}")
+        print(f"[ESTIMATE] K sample (first row, first 5 cols): {K[0, :5] if K.size > 0 else 'EMPTY'}")
 
 
         if X.shape == Y.shape:
+            asymmetry = np.abs(K - K.T).mean()
+            print(f"[ESTIMATE] Symmetrizing K. Mean |K-Kᵀ| = {asymmetry:.6f}")
             K = 0.5 * (K + K.T)
 
         return K

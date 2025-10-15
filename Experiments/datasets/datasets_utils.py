@@ -10,7 +10,7 @@ class Dataset(object):
     def __init__(self, out_dir, name='dataset', preprocess='standardise'):
         """
         Args:
-            out_dir (dir): directory to save and load data_utils to and from.
+            out_dir (dir): directory to save and load datasets to and from.
             name (str): name for dataset.
 
         Attributes:
@@ -47,7 +47,7 @@ class Dataset(object):
 
     def load_or_generate_data(self, force_generate=False, save=True):
         """
-        Return the data_utils AFTER preprocessing if preprocessing is not None.
+        Return the datasets AFTER preprocessing if preprocessing is not None.
         """
         files_exist = os.path.isfile(self.out_dir + self.name + \
                                      "X_train.npy") and \
@@ -208,7 +208,7 @@ class Naval(Dataset):
         self.train_test_split = train_test_split
 
     def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/05_naval/data_utils.csv'))
+        data = np.loadtxt(open(self.out_dir + '/05_naval/datasets.csv'))
         np.random.shuffle(data)  # in-place
         X = data[:, :16]
         Y = data[:, 17].reshape((-1, 1))

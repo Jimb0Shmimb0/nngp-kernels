@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
-from Kernels.Cosine.NeuralCosineActivationKernel import FiniteCosineActivationKernel
+from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 
 
 ########
@@ -23,7 +23,7 @@ def mean_square_error_from_kernels(x1, x2, m_values, num_trials=100):
         print(f"Estimating MSE for {m}")
         errors = []
         for _ in range(num_trials):
-            finite_kernel = FiniteCosineActivationKernel(X=np.vstack([x1, x2]),
+            finite_kernel = NeuralCosineActivationKernel(X=np.vstack([x1, x2]),
                                                          num_random_features=m)
             k_hat = finite_kernel(x1.reshape(1, -1), x2.reshape(1, -1))[0, 0]
             errors.append((k_hat - k_true) ** 2)
