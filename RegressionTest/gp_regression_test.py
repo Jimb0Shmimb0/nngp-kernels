@@ -7,6 +7,7 @@ from sklearn.gaussian_process.kernels import RBF
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
+from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
 
 f = lambda x: x * np.sin(x)
 
@@ -67,7 +68,7 @@ X_train, y_train = generate_and_plot_data(X, f)
 rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
 
 # get GP regressor and fit to training datasets
-rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9) # alpha=noise_std**2
+rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9, alpha=1e-5) # alpha=noise_std**2
 rbf_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
@@ -84,14 +85,12 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "RBF")
 cosine_activation_kernel = CosineActivationKernel()
 
 # get GP regressor and fit to training datasets
-cos_gaussian_process = GaussianProcessRegressor(kernel=cosine_activation_kernel)
+cos_gaussian_process = GaussianProcessRegressor(kernel=cosine_activation_kernel, alpha=1e-5)
 cos_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
 mean_prediction, std_prediction = cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine activation")
-
-
 
 
 ########
@@ -102,14 +101,29 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Cosine 
 finite_cosine_activation_kernel = NeuralCosineActivationKernel(X)
 
 # get GP regressor and fit to training datasets
-f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activation_kernel)
+f_cos_gaussian_process = GaussianProcessRegressor(kernel=finite_cosine_activation_kernel, alpha=1e-5)
 f_cos_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
 mean_prediction, std_prediction = f_cos_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Cosine activation")
 
+########
+# TANH ACTIVATION KERNEL TEST
+########
 
+# define kernel
+tanh_activation_kernel = TanhActivationKernel()
+
+# get GP regressor and fit to training datasets
+tanh_gaussian_process = GaussianProcessRegressor(kernel=tanh_activation_kernel, alpha=1e-5) # Too much noise. Fix
+tanh_gaussian_process.fit(X_train, y_train)
+
+# Get the mean and std prediction and plot the resulting gp regression
+mean_prediction, std_prediction = tanh_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
+plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Tanh activation")
+
+"""
 ########
 # FINITE TANH ACTIVATION KERNEL TEST
 ########
@@ -125,4 +139,4 @@ f_tanh_gaussian_process.fit(X_train, y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 mean_prediction, std_prediction = f_tanh_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Tanh activation")
-
+"""

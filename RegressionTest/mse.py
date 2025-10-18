@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
+from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
+from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
 
 
 ########
@@ -13,7 +15,7 @@ def mean_square_error_from_kernels(x1, x2, m_values, num_trials=100):
     """Estimate MSE between finite and infinite cosine activation kernels."""
 
     # Instantiate infinite kernel
-    infinite_kernel = CosineActivationKernel()
+    infinite_kernel = TanhActivationKernel()
 
     # True analytic kernel value (CONFIRM WHATS GOING ON HERE PLEASE)
     k_true = infinite_kernel(x1.reshape(1, -1), x2.reshape(1, -1))[0, 0]
@@ -23,7 +25,7 @@ def mean_square_error_from_kernels(x1, x2, m_values, num_trials=100):
         print(f"Estimating MSE for {m}")
         errors = []
         for _ in range(num_trials):
-            finite_kernel = NeuralCosineActivationKernel(X=np.vstack([x1, x2]),
+            finite_kernel = NeuralTanhActivationKernel(X=np.vstack([x1, x2]),
                                                          num_random_features=m)
             k_hat = finite_kernel(x1.reshape(1, -1), x2.reshape(1, -1))[0, 0]
             errors.append((k_hat - k_true) ** 2)

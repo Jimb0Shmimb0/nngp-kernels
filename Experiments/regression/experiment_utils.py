@@ -16,7 +16,7 @@ def evaluate_gp_predictions(model_name, y_true_raw, y_pred_mean):
     # Print scores
     results = {
         "MSE": mse(y_true_raw, y_pred_mean),
-        "R²": r2_score(y_true_raw, y_pred_mean),
+        "R Squared": r2_score(y_true_raw, y_pred_mean),
     }
 
     print(f"\n=== {model_name} Performance ===")

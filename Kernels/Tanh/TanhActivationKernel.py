@@ -10,7 +10,7 @@ class TanhActivationKernel(Kernel):
       - Williams, C. K. I. (1997). "Computing with Infinite Networks".
     """
 
-    def __init__(self, b=0.853):
+    def __init__(self, b=np.sqrt(np.pi)/2):
         self.b = b  # scaling factor mapping tanh roughly equal to erf(bx)
 
     def __call__(self, X, Y=None, eval_gradient=False):
@@ -43,7 +43,7 @@ class TanhActivationKernel(Kernel):
         return K
 
     def diag(self, X):
-        # Diagonal elements (k(x, x)) = (2/π) * arcsin( (2b²‖x‖²) / (1 + 2b²‖x‖²) )
+        # Diagonal elements (2/π) * arcsin((2b^2 |x|^2) / (1 + 2b^2 |x|^2))
         X = check_array(X)
         norms = np.sum(X ** 2, axis=1)
         frac = (2 * (self.b ** 2) * norms) / (1 + 2 * (self.b ** 2) * norms)
