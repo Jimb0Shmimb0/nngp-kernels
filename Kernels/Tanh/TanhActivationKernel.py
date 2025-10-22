@@ -43,7 +43,7 @@ class TanhActivationKernel(Kernel):
         return K
 
     def diag(self, X):
-        # Diagonal elements (2/π) * arcsin((2b^2 |x|^2) / (1 + 2b^2 |x|^2))
+        # Diagonal elements (2/pi) * arcsin((2b^2 |x|^2) / (1 + 2b^2 |x|^2))
         X = check_array(X)
         norms = np.sum(X ** 2, axis=1)
         frac = (2 * (self.b ** 2) * norms) / (1 + 2 * (self.b ** 2) * norms)
