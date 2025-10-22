@@ -25,56 +25,30 @@ class NeuralTanhActivationKernel(Kernel):
             size=(self.num_random_features, X.shape[1])
         )  # w_i sim mathcal{N}(0, I)
 
-        self.L = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=(self.num_random_features,))
+        self.L1 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5,
+                                                                    size=(self.num_random_features, 1))
+        self.L2 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5,
+                                                                    size=(self.num_random_features, 1))
 
         # Note: If we want weights to be initialised during instantiation of this kernel, input X has to be passed in
         # W needs to match the shape of X.
 
         self.X = X
 
-        """
-        self.L1 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=(self.num_random_features, 1))
-        self.L2 = np.random.RandomState(self.random_state).logistic(loc=0.0, scale=0.5, size=(self.num_random_features, 1))
-        """
-
     def _estimate_kernel_matrix(self, X, Y):
+        Z1 = (X @ self.W.T).T # self.num_features x N
+        Z2 = (Y @ self.W.T).T # self.num_features x M
 
-        # Compute Z_1 and Z_2
-        Z_1 = X @ self.W.T  # shape (num_samples_X x num_random_features)
-        Z_2 = Y @ self.W.T  # shape (num_samples_Y x num_random_features)
+        indicator1 = (self.L1 <= Z1).astype(np.float32) # (self.num_features x N)
+        indicator2 = (self.L2 <= Z2).astype(np.float32) # (self.num_features x M)
 
-        # Get samples for L_1 and L_2 for each random feature
-
-        L_1 = np.ones(Z_1.shape) * self.L
-        L_2 = np.ones(Z_2.shape) * self.L
-
-        # Compute boolean matrix: (Lx <= Z) & (Ly <= YZ)
-        # k(x1, x2) = 4 * E[1(L <= Z) 1(L' <= Z')] - 1
-
-        # Notes for self:
-        # Add new axes in the middle for L_1 and Z_1, after computing the boolean matrix, we get a matrix (or tensor??)
-        # of size (num_samples_X, 1, num_random_features)
-        # Same for L_2 and Z_2, except the at the start, so that we obtain a boolean matrix of size
-        # (1, num_samples_Y, num_random_features)
-        # Broadcasting using & obtains a shape of (num_samples_X, num_samples_Y, num_features)
-        probabilities = (L_1[:, None, :] <= Z_1[:, None, :]) & (L_2[None, :, :] <= Z_2[None, :, :])
-
-        # Average across the random features dimension, obtaining K of size (num_samples_X, num_samples_Y)
-        K = 4.0 * np.mean(probabilities, axis=2) - 1.0  # Axis = 2 means we iterate over the random features
-
-        """
-        Z1 = (x1 @ self.W.T).T # self.num_features x N
-        Z2 = (x2 @ self.W.T).T # self.num_features x M
-
-        indicator1 = (self.l1 <= Z1) # (self.num_features x N)
-        indicator2 = (self.l2 <= Z2) # (self.num_features x M)
-
-        K = indicator1.T @ indicator2/self.num_features # (N x M)
-        
-        """
+        K = indicator1.T @ indicator2/self.num_random_features # (N x M)
 
         if X.shape == Y.shape:
-            K = 0.5 * (K + K.T) + 1e-6 * np.eye(K.shape[0])
+            K = 0.5 * (K + K.T)
+            eigenvalues, eigenvectors = np.linalg.eigh(K)
+            eigenvalues = np.maximum(eigenvalues, 1e-4)
+            K = (eigenvectors * eigenvalues) @ eigenvectors.T
 
         return K
 
