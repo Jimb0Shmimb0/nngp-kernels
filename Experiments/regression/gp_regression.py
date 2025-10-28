@@ -36,7 +36,7 @@ Y_test_original = unstandardise(Y_test)
 # Define noise variance constant alpha
 ALPHA = 1e-3 # can be higher up to 0.1
 
-"""
+
 #########
 # RBF KERNEL
 #########
@@ -91,7 +91,7 @@ tanh_gaussian_process = GaussianProcessRegressor(kernel=tanh_activation_kernel, 
 tanh_gaussian_process.fit(X_train, Y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
-tanh_mean_prediction, tanh_std_prediction = tanh_gaussian_process.predict(X_test, return_std=True)"""
+tanh_mean_prediction, tanh_std_prediction = tanh_gaussian_process.predict(X_test, return_std=True)
 
 ########
 # NEURAL NETWORK TANH ACTIVATION KERNEL
@@ -113,7 +113,7 @@ K = finite_tanh_activation_kernel(X_train, X_train)
 ##########
 # ANALYSIS
 ##########
-"""
+
 evaluate_gp_predictions(
     "RBF Kernel",
     Y_test_original,
@@ -137,7 +137,7 @@ evaluate_gp_predictions(
     Y_test_original,
     unstandardise(neural_cos_mean_prediction),
 )
-"""
+
 
 evaluate_gp_predictions(
     "Neural Hyperbolic Tangent Activation Kernel",

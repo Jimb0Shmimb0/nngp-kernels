@@ -90,7 +90,7 @@ for dataset_name, dataset_cls in DATASETS.items():
 
 
 df = pd.DataFrame(results)
-df = df[["dataset", "model", "mean squared error", "coefficient of cetermination"]]
+df = df[["dataset", "model", "mean squared error", "coefficient of determination"]]
 print("\n--- Aggregate Results ---")
 print(df.to_string(index=False))
 df.to_csv("output/results.csv", index=False)

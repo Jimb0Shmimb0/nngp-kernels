@@ -9,7 +9,7 @@ from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKe
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
 from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
 
-f = lambda x: x * np.sin(x)
+f = lambda x: x * np.sin(10*x)
 
 def plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, kernel_type):
     string_rep = inspect.getsourcelines(f)[0][0].split(':')[1].strip()
@@ -57,7 +57,7 @@ def generate_and_plot_data(X, f):
 # Dataset generation
 #########
 
-X = np.linspace(start=0, stop=10, num=1_000).reshape(-1, 1) # 1000 evenly spaced points between 0 and 10. Shape: (1000x1)
+X = np.linspace(start=0, stop=1, num=1_000).reshape(-1, 1) # 1000 evenly spaced points between 0 and 10. Shape: (1000x1)
 X_train, y_train = generate_and_plot_data(X, f)
 
 #########
@@ -68,7 +68,7 @@ X_train, y_train = generate_and_plot_data(X, f)
 rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
 
 # get GP regressor and fit to training datasets
-rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=9, alpha=1e-5) # alpha=noise_std**2
+rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, n_restarts_optimizer=0, alpha=1e-4) # alpha=noise_std**2
 rbf_gaussian_process.fit(X_train, y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
@@ -123,7 +123,7 @@ tanh_gaussian_process.fit(X_train, y_train)
 mean_prediction, std_prediction = tanh_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Tanh activation")
 
-"""
+
 ########
 # FINITE TANH ACTIVATION KERNEL TEST
 ########
@@ -139,4 +139,3 @@ f_tanh_gaussian_process.fit(X_train, y_train)
 # Get the mean and std prediction and plot the resulting gp regression
 mean_prediction, std_prediction = f_tanh_gaussian_process.predict(X, return_std=True) # alpha=noise_std**2
 plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Finite Tanh activation")
-"""
