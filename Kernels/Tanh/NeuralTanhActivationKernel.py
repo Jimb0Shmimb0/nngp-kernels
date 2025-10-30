@@ -50,7 +50,7 @@ class NeuralTanhActivationKernel(Kernel):
             eigenvalues = np.maximum(eigenvalues, 1e-4)
             K = (eigenvectors * eigenvalues) @ eigenvectors.T
 
-        return K
+        return 4.0 * K - 1.0
 
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
@@ -67,7 +67,8 @@ class NeuralTanhActivationKernel(Kernel):
         return K
 
     def diag(self, X):
-        return np.ones(X.shape[0])
+        X = check_array(X)
+        return np.diag(self._estimate_kernel_matrix(X,X))
 
     def is_stationary(self):
         return False

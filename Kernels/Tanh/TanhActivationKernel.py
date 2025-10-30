@@ -47,8 +47,8 @@ class TanhActivationKernel(Kernel):
         X = check_array(X)
         norms = np.sum(X ** 2, axis=1)
         frac = (2 * (self.b ** 2) * norms) / (1 + 2 * (self.b ** 2) * norms)
-        frac = np.clip(frac, -1.0, 1.0)
-        return (2 / np.pi) * np.arcsin(frac)
+        safe_frac = np.clip(frac, -1.0, 1.0)
+        return (2 / np.pi) * np.arcsin(safe_frac)
 
     def is_stationary(self):
         return False
