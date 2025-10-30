@@ -1,39 +1,26 @@
-import numpy as np
-from matplotlib import pyplot as plt
-
-from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
-from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
-from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
-from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
 import os
 import numpy as np
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF
-
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
-from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Kin8nm, Naval, Power, Protein, Wine, Yacht
+from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Wine, Yacht
 from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
-from Experiments.regression.experiment_utils import evaluate_gp_predictions
 import matplotlib.pyplot as plt
+import time
 
+start = time.time()
 
 DATASETS = {
-    "Boston": Boston, # WORKS
-    "Concrete": Concrete, # !
-    "Energy": Energy, # WORKS
-    "Kin8nm": Kin8nm, # !
-    "Naval": Naval, # !
-    "Power": Power, # !
-    "Protein": Protein, # !
-    "Wine": Wine, # !
-    "Yacht": Yacht, # WORKS
+    "Yacht": Yacht, # Cos done Tanh done
+    "Boston": Boston, # Cos done Tanh done
+    "Energy": Energy, # Cos done Tanh done
+    "Concrete": Concrete, # Cos done Tanh done
+    "Wine": Wine, # Cos done Tanh doing
 }
 
 # Choose dataset
 data_dir = os.path.join(os.path.dirname(os.getcwd()), "datasets")
-dataset = Boston(out_dir=data_dir)
+dataset = Wine(out_dir=data_dir)
 X_train, Y_train, X_test, Y_test = dataset.load_or_generate_data()
 
 # Define data "unstandardising" function
@@ -46,11 +33,11 @@ ALPHA = 1e-3 # can be higher up to 0.1
 rng = np.random.RandomState(1)
 
 ########
-# MEAN SQUARED ERROR CONVERGENCE: FINITE vs INFINITE COSINE KERNEL
+# MEAN SQUARED ERROR CONVERGENCE
 ########
 
-def mean_square_error_from_kernels(X, m_values, num_pairs=10, num_trials=10):
-    infinite_kernel = CosineActivationKernel()
+def mean_square_error_from_kernels(X, m_values, num_pairs=50, num_trials=100):
+    infinite_kernel = TanhActivationKernel()
     mse_values = []
 
     for m in m_values:
@@ -62,7 +49,7 @@ def mean_square_error_from_kernels(X, m_values, num_pairs=10, num_trials=10):
 
             k_true = infinite_kernel(x1, x2)[0, 0]
             for _ in range(num_trials):
-                finite_kernel = NeuralCosineActivationKernel(X=np.vstack([x1, x2]),
+                finite_kernel = NeuralTanhActivationKernel(X=np.vstack([x1, x2]),
                                                              num_random_features=m)
                 k_hat = finite_kernel(x1, x2)[0, 0]
                 errors.append((k_hat - k_true) ** 2)
@@ -73,6 +60,7 @@ def mean_square_error_from_kernels(X, m_values, num_pairs=10, num_trials=10):
 # Sample sizes
 m_values = np.logspace(0, 6, 50, dtype=int)
 mse_values = mean_square_error_from_kernels(X_train, m_values)
+print(mse_values)
 
 # Plot convergence
 plt.figure(figsize=(7, 5))
@@ -84,3 +72,7 @@ plt.grid(True, which="both", ls=":")
 plt.legend()
 plt.savefig("output/mse_finite_vs_infinite_cosine_kernel.png")
 plt.show()
+
+end = time.time()
+
+print(f"Time elapsed: {end - start}")

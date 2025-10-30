@@ -1,9 +1,9 @@
 import numpy as np
 
-def mse(y_true, y_pred):
-    # Mean squared error
+def rmse(y_true, y_pred):
+    # Root mean squared error
     y_true, y_pred = np.ravel(y_true), np.ravel(y_pred)
-    return np.mean((y_true - y_pred) ** 2)
+    return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 def r2_score(y_true, y_pred):
     # Coefficient of determination
@@ -15,7 +15,7 @@ def r2_score(y_true, y_pred):
 def evaluate_gp_predictions(model_name, y_true_raw, y_pred_mean):
     # Print scores
     results = {
-        "MSE": mse(y_true_raw, y_pred_mean),
+        "RMSE": rmse(y_true_raw, y_pred_mean),
         "R Squared": r2_score(y_true_raw, y_pred_mean),
     }
 

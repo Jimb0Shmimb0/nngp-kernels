@@ -1,27 +1,21 @@
 import os
-import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
-from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Kin8nm, Naval, Power, Protein, Wine, Yacht
+from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Wine, Yacht
 from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
 from experiment_utils import evaluate_gp_predictions
-import matplotlib.pyplot as plt
 
 
 DATASETS = {
-    "Boston": Boston, # WORKS
-    "Concrete": Concrete, # !
-    "Energy": Energy, # WORKS
-    "Kin8nm": Kin8nm, # !
-    "Naval": Naval, # !
-    "Power": Power, # !
-    "Protein": Protein, # !
-    "Wine": Wine, # !
-    "Yacht": Yacht, # WORKS
+    "Yacht": Yacht,
+    "Boston": Boston,
+    "Energy": Energy,
+    "Concrete": Concrete,
+    "Wine": Wine,
 }
 
 # Choose dataset
@@ -45,7 +39,7 @@ ALPHA = 1e-3 # can be higher up to 0.1
 rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
 
 # get GP regressor and fit to training datasets
-rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, alpha=ALPHA, normalize_y=True) # alpha=noise_std**2
+rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, alpha=ALPHA, normalize_y=True)
 rbf_gaussian_process.fit(X_train, Y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
@@ -144,7 +138,3 @@ evaluate_gp_predictions(
     Y_test_original,
     unstandardise(neural_tanh_mean_prediction),
 )
-
-
-# TODO: Formalise tests. Move datasets to the datasets package. Fix the finite tanh kernel!!!!!!
-# TODO: Start writing up notes properly. Draft the presentation notes!
