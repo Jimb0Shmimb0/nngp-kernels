@@ -42,15 +42,15 @@ class NeuralTanhActivationKernel(Kernel):
         indicator1 = (self.L1 <= Z1).astype(np.float32) # (self.num_features x N)
         indicator2 = (self.L2 <= Z2).astype(np.float32) # (self.num_features x M)
 
-        K = indicator1.T @ indicator2/self.num_random_features # (N x M)
+        K = 4 * indicator1.T @ indicator2/self.num_random_features - 1   # (N x M)
 
-        if X.shape == Y.shape:
+        if X.shape[0] == Y.shape[0]:
             K = 0.5 * (K + K.T)
             eigenvalues, eigenvectors = np.linalg.eigh(K)
             eigenvalues = np.maximum(eigenvalues, 1e-4)
             K = (eigenvectors * eigenvalues) @ eigenvectors.T
 
-        return 4.0 * K - 1.0
+        return K
 
     def __call__(self, X, Y=None, eval_gradient=False):
         # Check X and Y are arrays
