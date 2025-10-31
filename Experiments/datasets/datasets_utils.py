@@ -178,100 +178,6 @@ class Energy(Dataset):
 
         return [X_train, Y_train, X_test, Y_test]
 
-
-class Kin8nm(Dataset):
-    def __init__(self, out_dir, train_test_split=0.8):
-        super().__init__(out_dir, 'kin8nm')
-        self.train_test_split = train_test_split
-
-    def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/04_kin8nm/Dataset.csv'))
-        np.random.shuffle(data)  # in-place
-        X = data[:, :8]
-        Y = data[:, 8].reshape((-1, 1))
-
-        n = X.shape[0]
-        train_size = int(self.train_test_split * n)
-
-        X_train = X[:train_size, :]
-        Y_train = Y[:train_size, :]
-        X_test = X[train_size:, :]
-        Y_test = Y[train_size:, :]
-
-        return [X_train, Y_train, X_test, Y_test]
-
-
-class Naval(Dataset):
-    # http://archive.ics.uci.edu/ml/datasets/condition+based+maintenance+of+naval+propulsion+plants
-    def __init__(self, out_dir, train_test_split=0.8):
-        super().__init__(out_dir, 'naval')
-        self.train_test_split = train_test_split
-
-    def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/05_naval/datasets.csv'))
-        np.random.shuffle(data)  # in-place
-        X = data[:, :16]
-        Y = data[:, 17].reshape((-1, 1))
-
-        n = X.shape[0]
-        train_size = int(self.train_test_split * n)
-
-        X_train = X[:train_size, :]
-        Y_train = Y[:train_size, :]
-        X_test = X[train_size:, :]
-        Y_test = Y[train_size:, :]
-
-        return [X_train, Y_train, X_test, Y_test]
-
-
-class Power(Dataset):
-    # https://archive.ics.uci.edu/ml/datasets/combined+cycle+power+plant
-    def __init__(self, out_dir, train_test_split=0.8):
-        super().__init__(out_dir, 'power')
-        self.train_test_split = train_test_split
-
-    def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/06_power_plant/Folds5x2_pp.csv'),
-                          delimiter=',', skiprows=1)
-        np.random.shuffle(data)  # in-place
-        X = data[:, :4]
-        Y = data[:, 4].reshape((-1, 1))
-
-        n = X.shape[0]
-        train_size = int(self.train_test_split * n)
-
-        X_train = X[:train_size, :]
-        Y_train = Y[:train_size, :]
-        X_test = X[train_size:, :]
-        Y_test = Y[train_size:, :]
-
-        return [X_train, Y_train, X_test, Y_test]
-
-
-class Protein(Dataset):
-    # https://archive.ics.uci.edu/ml/datasets/Physicochemical%2BProperties%2Bof%2BProtein%2BTertiary%2BStructure
-    def __init__(self, out_dir, train_test_split=0.8):
-        super().__init__(out_dir, 'protein')
-        self.train_test_split = train_test_split
-
-    def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/07_protein/CASP.csv'),
-                          delimiter=',', skiprows=1)
-        np.random.shuffle(data)  # in-place
-        X = data[:, 1:10]
-        Y = data[:, 0].reshape((-1, 1))
-
-        n = X.shape[0]
-        train_size = int(self.train_test_split * n)
-
-        X_train = X[:train_size, :]
-        Y_train = Y[:train_size, :]
-        X_test = X[train_size:, :]
-        Y_test = Y[train_size:, :]
-
-        return [X_train, Y_train, X_test, Y_test]
-
-
 class Wine(Dataset):
     # https://archive.ics.uci.edu/ml/datasets/Wine+Quality
     def __init__(self, out_dir, train_test_split=0.8):
@@ -279,7 +185,7 @@ class Wine(Dataset):
         self.train_test_split = train_test_split
 
     def _generate_data(self):
-        data = np.loadtxt(open(self.out_dir + '/08_wine/winequality-red.csv'),
+        data = np.loadtxt(open(self.out_dir + '/04_wine/winequality-red.csv'),
                           delimiter=';', skiprows=1)
         np.random.shuffle(data)  # in-place
         X = data[:, :11]
@@ -304,7 +210,7 @@ class Yacht(Dataset):
 
     def _generate_data(self):
         data = np.loadtxt(open(self.out_dir + \
-                               '/09_yacht/yacht_hydrodynamics.csv'))
+                               '/05_yacht/yacht_hydrodynamics.csv'))
         np.random.shuffle(data)  # in-place
         X = data[:, :6]
         Y = data[:, 6].reshape((-1, 1))

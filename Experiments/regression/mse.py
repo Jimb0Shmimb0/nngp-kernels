@@ -10,27 +10,16 @@ import time
 
 start = time.time()
 
-DATASETS = {
-    "Yacht": Yacht, # Cos done Tanh done
-    "Boston": Boston, # Cos done Tanh done
-    "Energy": Energy, # Cos done Tanh done
-    "Concrete": Concrete, # Cos done Tanh done
-    "Wine": Wine, # Cos done Tanh doing
-}
-
 # Choose dataset
 data_dir = os.path.join(os.path.dirname(os.getcwd()), "datasets")
-dataset = Wine(out_dir=data_dir)
+dataset = Yacht(out_dir=data_dir)
 X_train, Y_train, X_test, Y_test = dataset.load_or_generate_data()
 
 # Define data "unstandardising" function
 unstandardise = lambda x : (x * dataset.Y_std) + dataset.Y_mean
 Y_test_original = unstandardise(Y_test)
 
-# Define noise variance constant alpha
-ALPHA = 1e-3 # can be higher up to 0.1
-
-rng = np.random.RandomState(1)
+rng = np.random.RandomState(42)
 
 ########
 # MEAN SQUARED ERROR CONVERGENCE

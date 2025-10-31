@@ -50,9 +50,6 @@ def generate_and_plot_data(X, f):
     training_indices = rng.choice(np.arange(y.size), size=6, replace=False)  # pick 6 out of [0, 1, 2, …, 999]
     return X[training_indices], y[training_indices]
 
-
-
-
 #########
 # Dataset generation
 #########
@@ -128,7 +125,6 @@ plot_gaussian_process_regression(X, f, mean_prediction, std_prediction, "Tanh ac
 # FINITE TANH ACTIVATION KERNEL TEST
 ########
 
-# TODO: Kernel is not returning a positive definite matrix. Fix please!
 # define kernel
 finite_tanh_activation_kernel = NeuralTanhActivationKernel(X)
 

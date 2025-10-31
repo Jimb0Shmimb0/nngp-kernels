@@ -36,10 +36,10 @@ ALPHA = 1e-3 # can be higher up to 0.1
 #########
 
 # define kernel
-rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
+rbf_kernel = 1 * RBF(length_scale=1.0, length_scale_bounds="fixed")
 
 # get GP regressor and fit to training datasets
-rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, alpha=ALPHA, normalize_y=True)
+rbf_gaussian_process = GaussianProcessRegressor(kernel=rbf_kernel, alpha=ALPHA, normalize_y=True, optimizer=None)
 rbf_gaussian_process.fit(X_train, Y_train)
 
 # Get the mean and std prediction and plot the resulting gp regression
@@ -131,7 +131,6 @@ evaluate_gp_predictions(
     Y_test_original,
     unstandardise(neural_cos_mean_prediction),
 )
-
 
 evaluate_gp_predictions(
     "Neural Hyperbolic Tangent Activation Kernel",
