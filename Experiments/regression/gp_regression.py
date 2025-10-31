@@ -20,7 +20,7 @@ DATASETS = {
 
 # Choose dataset
 data_dir = os.path.join(os.path.dirname(os.getcwd()), "datasets")
-dataset = Yacht(out_dir=data_dir)
+dataset = Wine(out_dir=data_dir)
 X_train, Y_train, X_test, Y_test = dataset.load_or_generate_data()
 
 # Define data "unstandardising" function
@@ -103,6 +103,7 @@ neural_tanh_mean_prediction, neural_tanh_std_prediction = neural_tanh_gaussian_p
 
 K = finite_tanh_activation_kernel(X_train, X_train)
 
+#TODO: MAKE TESTING REPEATABLE
 
 ##########
 # ANALYSIS
