@@ -1,27 +1,31 @@
 import numpy as np
+from sklearn.gaussian_process import GaussianProcessRegressor
+
+from Experiments.regression.constants import ALPHA
+
+def fit_and_predict_gp(kernel, X_train, Y_train, X_test):
+    gp = GaussianProcessRegressor(kernel=kernel, alpha=ALPHA, normalize_y=True, optimizer=None)
+    gp.fit(X_train, Y_train)
+    mean = gp.predict(X_test)
+    return mean
 
 def rmse(y_true, y_pred):
     # Root mean squared error
     y_true, y_pred = np.ravel(y_true), np.ravel(y_pred)
     return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
-def r2_score(y_true, y_pred):
-    # Coefficient of determination
-    y_true, y_pred = np.ravel(y_true), np.ravel(y_pred)
-    ss_res = np.sum((y_true - y_pred) ** 2)
-    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
-    return 1 - ss_res / ss_tot
+def evaluate_gp_predictions(rmse_results):
+    # Print and return rmse results
+    final_results = {"RBF": None, "Cos": None, "NN Cos": None, "Tanh": None, "NN Tanh": None}
 
-def evaluate_gp_predictions(model_name, y_true_raw, y_pred_mean):
-    # Print scores
-    results = {
-        "RMSE": rmse(y_true_raw, y_pred_mean),
-        "R Squared": r2_score(y_true_raw, y_pred_mean),
-    }
+    for kernel, results in rmse_results.items():
+        rmse_mean = np.mean(results)
+        rmse_std = np.std(results)
 
-    print(f"\n=== {model_name} Performance ===")
-    for k, v in results.items():
-        print(f"{k:>8}: {v:.4f}")
-    print("===============================")
+        final_results[kernel] = (rmse_mean, rmse_std)
 
-    return results
+        print(f"\n======== {kernel} Kernel Performance ========")
+        print(f"RMSE mean: {rmse_mean:8.4f}, RMSE std:{rmse_std:8.4f}") # 8 chars wide, 4 dec. places. Right aligned
+        print("=======================================")
+
+    return final_results
