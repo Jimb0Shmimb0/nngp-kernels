@@ -6,16 +6,20 @@ from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
 from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Wine, Yacht
-from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
+from Kernels.Tanh.ApproxTanhActivationKernel import TanhActivationKernel
 import matplotlib.pyplot as plt
 import time
+
+########
+# MEAN SQUARED ERROR CONVERGENCE EXPERIMENT (1 DATASET AT A TIME)
+########
 
 # Choose dataset (One of Yacht(...), Boston(...), Energy(...), Concrete(...) or Wine(...))
 dataset = Yacht(out_dir=os.path.join(os.path.dirname(os.getcwd()), "datasets"))
 
 # Set the kernel classes
 infinite_kernel_class = CosineActivationKernel
-finite_kernel_class = NeuralTanhActivationKernel
+finite_kernel_class = NeuralCosineActivationKernel
 
 
 
@@ -25,10 +29,6 @@ finite_kernel_class = NeuralTanhActivationKernel
 X_train, Y_train, X_test, Y_test = dataset.load_or_generate_data()
 rng = np.random.RandomState(MSE_SEED)
 start = time.time() # Start timer
-
-########
-# MEAN SQUARED ERROR CONVERGENCE EXPERIMENT
-########
 
 def mean_square_error_from_kernels(X, m_values=MSE_NUM_M_VALUES, num_pairs=MSE_NUM_PAIRS, num_trials=MSE_NUM_TRIALS):
     infinite_kernel = infinite_kernel_class()

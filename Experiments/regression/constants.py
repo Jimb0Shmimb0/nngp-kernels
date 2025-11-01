@@ -2,6 +2,7 @@
 ALPHA = 1e-5
 SEED = 42
 NUM_TRIALS = 30
+NUM_RANDOM_FEATURES = 20000
 
 # Mse convergence test
 MSE_SEED = 1
