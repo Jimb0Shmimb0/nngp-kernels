@@ -16,7 +16,7 @@ def rmse(y_true, y_pred):
 
 def evaluate_gp_predictions(rmse_results):
     # Print and return rmse results
-    final_results = {"RBF": None, "Cos": None, "NN Cos": None, "Tanh": None, "NN Tanh": None}
+    final_results = {"RBF": None, "Cos": None, "Tanh": None, "NN Cos": None, "NN Tanh": None}
 
     for kernel, results in rmse_results.items():
         rmse_mean = np.mean(results)

@@ -7,7 +7,7 @@ from sklearn.gaussian_process.kernels import RBF
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
-from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
+from Kernels.Tanh.ApproxTanhActivationKernel import TanhActivationKernel
 
 f = lambda x: x * np.sin(10*x)
 

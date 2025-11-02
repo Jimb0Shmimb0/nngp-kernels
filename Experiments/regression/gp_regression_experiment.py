@@ -2,16 +2,16 @@ import os
 import time
 import numpy as np
 from sklearn.gaussian_process.kernels import RBF
-from Experiments.regression.constants import SEED, NUM_TRIALS
+from Experiments.regression.constants import SEED, NUM_TRIALS, NUM_RANDOM_FEATURES
 from Kernels.Cosine.CosineActivationKernel import CosineActivationKernel
 from Kernels.Cosine.NeuralCosineActivationKernel import NeuralCosineActivationKernel
 from Kernels.Tanh.NeuralTanhActivationKernel import NeuralTanhActivationKernel
 from Experiments.datasets.datasets_utils import Concrete, Boston, Energy, Wine, Yacht
-from Kernels.Tanh.TanhActivationKernel import TanhActivationKernel
+from Kernels.Tanh.ApproxTanhActivationKernel import TanhActivationKernel
 from experiment_utils import evaluate_gp_predictions, fit_and_predict_gp, rmse
 
 # Choose dataset (One of Yacht(...), Boston(...), Energy(...), Concrete(...) or Wine(...))
-dataset = Wine(out_dir=os.path.join(os.path.dirname(os.getcwd()), "datasets"))
+dataset = Concrete(out_dir=os.path.join(os.path.dirname(os.getcwd()), "datasets"))
 
 
 
@@ -31,10 +31,10 @@ Y_test_original = unstandardise(Y_test)
 # GP REGRESSION EXPERIMENT
 ########
 
-rmse_results = {"RBF": [], "Cos": [], "NN Cos": [], "Tanh": [], "NN Tanh": []}
+rmse_results = {"RBF": [], "Cos": [], "Tanh": [], "NN Cos": [], "NN Tanh": []}
 
 def fit_and_predict_gps(rng):
-    m_preds = {"RBF": None, "Cos": None, "NN Cos": None, "Tanh": None, "NN Tanh": None}
+    m_preds = {"RBF": None, "Cos": None, "Tanh": None, "NN Cos": None, "NN Tanh": None}
     # Fit data and predict on each GP using
     # RBF, Cosine activation, NN cosine activation, Tanh activation and NN Tanh activation kernels respectively
     m_preds["RBF"] = (

@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.gaussian_process.kernels import Kernel
 from sklearn.utils.validation import check_array
-from scipy.stats import logistic, multivariate_normal
+from Experiments.regression.constants import NUM_RANDOM_FEATURES, SEED
 
 
 class NeuralTanhActivationKernel(Kernel):
@@ -15,7 +15,7 @@ class NeuralTanhActivationKernel(Kernel):
     Approximate using num_random_features samples.
     """
 
-    def __init__(self, X, num_random_features=20000, random_state=42):
+    def __init__(self, X, num_random_features=NUM_RANDOM_FEATURES, random_state=SEED):
         self.num_random_features = num_random_features
         self.random_state = random_state
 

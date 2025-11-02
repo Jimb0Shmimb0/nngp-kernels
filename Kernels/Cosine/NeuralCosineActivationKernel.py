@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.gaussian_process.kernels import Kernel
 from sklearn.utils.validation import check_array
+from Experiments.regression.constants import NUM_RANDOM_FEATURES, SEED
 
 
 class NeuralCosineActivationKernel(Kernel):
@@ -12,7 +13,7 @@ class NeuralCosineActivationKernel(Kernel):
     note dim_x is the number of features
     """
 
-    def __init__(self, X, num_random_features=20000, random_state=42):
+    def __init__(self, X, num_random_features=NUM_RANDOM_FEATURES, random_state=SEED):
         self.num_random_features = num_random_features
         self.random_state = random_state
 
