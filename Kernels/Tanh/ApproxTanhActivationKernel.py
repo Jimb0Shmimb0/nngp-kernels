@@ -6,8 +6,8 @@ class TanhActivationKernel(Kernel):
     """
     Kernel definition: (2/π) * arcsin( (2b^2 x^top y) / sqrt((1 + 2b^2|x|^2)(1 + 2b^2|y|^2)) )
 
-    Reference: #TODO: PUT IN THE NOTES!!!!
-      - Williams, C. K. I. (1997). "Computing with Infinite Networks".
+    Reference:
+      - Williams, C. K. I. (1996). "Computing with Infinite Networks".
     """
 
     def __init__(self, b=np.sqrt(np.pi)/2):
