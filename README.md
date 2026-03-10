@@ -48,6 +48,24 @@ python Experiments/regression/mean_std_mse.py
 Datasets can be chosen by changing ```datasets``` in ```Experiments/regression/gp_regression_experiment.py``` to any of the datasets listed out in ```Experiments/datasets/dataset_utils.py```
 ## Derivations
 
+### Background
+
+In this section, we outline concepts from existing literature required for the kernel derivations, including the definition of a GP, the structure of a single hidden layer neural network and the model for GP regression.
+
+A Gaussian process (GP) is a potentially infinite set of random variables such that the joint distribution of every finite subset of these random variables is multivariate Gaussian:
+```math
+f \sim \mathcal{GP}(m(\mathbf{x}), k(\mathbf{x}_1, \mathbf{x}_2)) \label{eq:gp}
+```
+
+where the mean function and covariance function are defined as:
+```math
+    m(\mathbf{x}) = \mathbb{E}[f(\mathbf{x})]
+```    
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}\big[(f(\mathbf{x}_1) - \mathbb{E}[f(\mathbf{x}_1)]) (f(\mathbf{x}_2) - \mathbb{E}[f(\mathbf{x}_2)])\big]
+```
+\end{equation}
+where $\mathbf{x} \in \mathbb{R}^d$ 
 
 ## Notes
 
