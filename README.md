@@ -9,6 +9,8 @@ All models were trained on a training subset and evaluated on a seperate test se
 Predictive performance the kernels were assessed using the Root Mean Squared Error (RMSE) between predicted and actual outputs. 
 We also examine the convergence behaviour, using the Mean Squared Error (MSE) between the finite and infinite kernels.
 
+A link to the paper will be provided later. In the meantime, check the bottom for derivations.
+
 ## Motivation
 
 Neural networks with randomly initialized weights converge to Gaussian processes as the width of their hidden layers approaches infinity (Neal, 1995).  
