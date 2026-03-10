@@ -88,6 +88,113 @@ Given input data points $\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_n$  where
 ```
 assuming that the function $f$ that relates the inputs to the outputs is drawn from a Gaussian process with mean function $m$ and covariance function $k$
 
+### The Neural Network model in a GP
+
+We will now use the function definition of the single hidden layer neural network for a GP
+
+Finding the mean of this GP can be done by writing the function's matrix-vector product in summation form, with the sum factored out of the expectation. Since each element of $W^{(2)}_k$ is drawn from a normal distribution with a zero mean and variance $1/D$, this GP will also have a zero mean
+```math
+    m(\mathbf{x}) = \sum_{i=1}^D\mathbb{E}\left[W^{(2)}_i  \sigma(W^{(1)}_i \mathbf{x})\right] = 0
+```
+The covariance function can be found using a similar method. Using the fact that the mean is $0$, the two matrix-vector products can be written in summation form, with each sum being factored out of the expectation.
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \sum_{i=1}^{D}\sum_{j=1}^{D}\mathbb{E}\left[W^{(2)}_i  W^{(2)}_j\right]\mathbb{E}\left[\sigma(W^{(1)}_i  \mathbf{x}_1) \sigma(W^{(1)}_j  \mathbf{x}_2)\right]
+```
+For all $i$ and $j$ where $i \neq j$, the expectation of the product of two elements coming from $W^{(2)}$ will be zero, since each element is drawn independently. This allows the double sum to be reduced down to only consider parts of the sum where $i = j$. For all $i$ and $j$ where $i = j$, this expectation becomes the square of one element coming from $W^{(2)}$. Combining this with the fact that each $W^{(2)}_k$ has a zero mean, this expectation can be expressed as a variance, allowing the double sum to be reduced to
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = \sum_{i=1}^{D}\text{Var}\left[W^{(2)}_i\right]\mathbb{E}\left[\sigma(W^{(1)}_i \mathbf{x}_1)\sigma(W^{(1)}_i \mathbf{x}_2)\right]
+```
+The variance of each $W^{(2)}_k$ is $1/D$, allowing the variance term to be factored out as $1/D$. Since each row of $W^{(1)}_i$ has each element drawn from the same probability distribution, $W^{(1)}_1$ can take the place of $W^{(1)}_i$, which yields
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \frac{1}{D}\sum_{i=1}^{D}\mathbb{E}\left[\sigma(W^{(1)}_i  \mathbf{x}_1) \sigma(W^{(1)}_i  \mathbf{x}_2)\right] = \mathbb{E}\left[\sigma(W^{(1)}_1 \mathbf{x}_1) \sigma(W^{(1)}_1  \mathbf{x}_2)\right]
+```
+For the sake of clarity, we allow the final kernel expression will be defined as
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}_{\mathbf{w} \sim \mathcal{N}\left(\mathbf{0}, \mathbf{I}_d\right)}\left[\sigma(\mathbf{w}^{\top} \mathbf{x}_1) \sigma(\mathbf{w}^{\top}  \mathbf{x}_2)\right]
+```
+where $\mathbf{w} \in \mathbb{R}^d$ denotes the transpose of $W_1^{(1)}$, and $\mathbf{I}_d$ denotes the identity covariance matrix of size $d$.
+
+By converting the kernel expression to it's integral form 
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \int_{\mathbb{R}^d} p(\mathbf{w})\sigma(\mathbf{w}^{\top} \mathbf{x}_1) \sigma(\mathbf{w}^{\top} \mathbf{x}_2)\,d\mathbf{w}
+```
+We can observe that integration is carried out over the entire $d$-dimensional space over vector $\mathbf{w}$. For easier integration over just two variables, two new scalar random variables $Z$ and $Z'$ can be defined such that
+$\[Z = \mathbf{w}^{\top} \mathbf{x}_1\]$
+$\[Z'= \mathbf{w}^{\top} \mathbf{x}_2\]$
+The kernel expression can now be expressed as
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}_{Z, Z'}\left[\sigma(Z)\sigma(Z')\right]
+```
+where
+```math
+Z, Z' \sim \mathcal{N}\left(\mathbf{0}, XX^\top\right)
+```
+and
+```math
+X = \begin{bmatrix} \mathbf{x}_1^\top \\ \mathbf{x}_2^\top \end{bmatrix}
+```
+
+### Cos(x)
+
+Using $\sigma(\mathbf{x}) = \cos(\mathbf{x})$, the kernel function becomes 
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}_{Z, Z' \sim \mathcal{N}\left(\mathbf{0}, XX^\top\right)}\left[\cos(Z)\cos(Z')\right]
+```
+By using the angle addition formula for the cosine function the expectation can be expressed as the sum of two expectations of cosines like so
+```math
+\tfrac{1}{2} \left(\mathbb{E}[\cos(u)] + \mathbb{E}[\cos(v)]\right)
+```
+where $u = Z  - Z'$ and $v = Z + Z'$. It is clear that both $u$ and $v$ have a zero mean. As for the variance, it can be computed by taking the expectation of $u^2$ and $v^2$, which can be done by using the covariance matrix of $Z$ and $Z'$. 
+```math
+\text{Var}[u] = \mathbb{E}[u^2]= \|\mathbf{x}_1\|^2 - 2\mathbf{x}_1^\top \mathbf{x}_2 + \|\mathbf{x}_2\|^2
+```
+```math
+\text{Var}[v] = \mathbb{E}[v^2]= \|\mathbf{x}_1\|^2 + 2\mathbf{x}_1^\top \mathbf{x}_2 + \|\mathbf{x}_2\|^2
+```
+
+We then use the fact that the expected value of the cosine of a random variable V is
+```math
+\mathbb{E}[\cos(V)] = e^\frac{-r^2}{2} 
+```
+given $V \sim \mathcal{N}(0,r^2)$, to find the expectations of cosines stated earlier
+```math
+\mathbb{E}[\cos(u)] = e^{-\frac{1}{2}(\|\mathbf{x}_1\|^2 - 2\mathbf{x}_1^\top \mathbf{x}_2 + \|\mathbf{x}_2\|^2)}
+```
+```math
+\mathbb{E}[\cos(v)] = e^{-\frac{1}{2}(\|\mathbf{x}_1\|^2 + 2\mathbf{x}_1^\top \mathbf{x}_2 + \|\mathbf{x}_2\|^2)}
+```
+which can then be summed together and halved to give the analytic closed form expression for the kernel
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = e^{-\tfrac{1}{2}\big(\|\mathbf{x}_1\|^2 + \|\mathbf{x}_2\|^2\big)} \cosh(\mathbf{x}_1^\top \mathbf{x}_2)
+```
+
+### Tanh(x)
+
+Using $\sigma(\mathbf{x}) = \tanh{(\mathbf{x})}$, the kernel function becomes
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}_{Z, Z' \sim \mathcal{N}\left(\mathbf{0}, XX^\top\right)}\left[\tanh(Z)\tanh(Z')\right]
+```
+$\tanh{(x)}$ can be rewritten in terms of the standard logistic function. We let S to be the standard logistic function.
+```math
+\tanh{(Z)} = 2S(2Z) - 1
+```
+With this definition, the kernel function becomes
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = \mathbb{E}_{Z, Z'}\left[4S(2Z)S(2Z') - 2S(Z) - 2S(Z') + 1\right]
+```
+Using the fact that the expectation of $S(Z)$ is $1/2$, via the symmetry property, $S(-x) = 1 - S(x)$, the kernel expression can be further reduced
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = 4\mathbb{E}_{Z, Z'}\left[S(2Z)S(2Z')\right] - 1
+```
+This expression can then be rewritten in terms of the cumulative distribution function of two logistic random variables, $L$ and $L'$, both of which are independent with a mean of zero and scale factor of $1/2$
+```math
+k(\mathbf{x}_1, \mathbf{x}_2) = 4\mathbb{E}_{Z, Z'}\left[\mathbb{P}(L \le Z)\mathbb{P}(L' \le Z')\right] - 1
+```
+which can be reduced down to an expression involving the following joint probability
+```math
+    k(\mathbf{x}_1, \mathbf{x}_2) = 4\mathbb{P}(L \le Z\text{ , }L' \le Z') - 1
+```
+
 ## Notes
 
 This project was completed as part of the FIT2082 research project at Monash University under the supervision of Russell Tsuchida.
