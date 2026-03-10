@@ -44,3 +44,7 @@ python Experiments/regression/mean_std_mse.py
 ```
 
 Datasets can be chosen by changing ```datasets``` in ```Experiments/regression/gp_regression_experiment.py``` to any of the datasets listed out in ```Experiments/datasets/dataset_utils.py```
+
+## Note
+
+This project was completed as part of the FIT2082 research project at Monash University under the supervision of Russell Tsuchida.
