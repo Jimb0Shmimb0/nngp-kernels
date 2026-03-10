@@ -195,6 +195,8 @@ which can be reduced down to an expression involving the following joint probabi
     k(\mathbf{x}_1, \mathbf{x}_2) = 4\mathbb{P}(L \le Z\text{ , }L' \le Z') - 1
 ```
 
+### Appendix: TODO
+
 ## Notes
 
 This project was completed as part of the FIT2082 research project at Monash University under the supervision of Russell Tsuchida.
