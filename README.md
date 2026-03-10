@@ -9,7 +9,7 @@ All models were trained on a training subset and evaluated on a seperate test se
 Predictive performance the kernels were assessed using the Root Mean Squared Error (RMSE) between predicted and actual outputs. 
 We also examine the convergence behaviour, using the Mean Squared Error (MSE) between the finite and infinite kernels.
 
-A link to the paper will be provided later. In the meantime, check the bottom for derivations.
+A link to the paper will be provided later. In the meantime, check the bottom for [derivations](#derivations).
 
 ## Motivation
 
@@ -46,7 +46,9 @@ python Experiments/regression/mean_std_mse.py
 ```
 
 Datasets can be chosen by changing ```datasets``` in ```Experiments/regression/gp_regression_experiment.py``` to any of the datasets listed out in ```Experiments/datasets/dataset_utils.py```
+## Derivations
 
-## Note
+
+## Notes
 
 This project was completed as part of the FIT2082 research project at Monash University under the supervision of Russell Tsuchida.
