@@ -21,17 +21,15 @@ This project investigates:
 1. How covariance functions can be derived from neural networks with random weights.
 2. Whether these kernels perform well in Gaussian Process regression.
 
-## Installation
+## Installing Dependencies
 
 Clone the repository and install the requirements:
 
 ```bash
-git clone https://github.com/Jimb0Shmimb0/nngp-kernels
-cd nngp-kernels
 pip install -r requirements.txt
 ```
 
-## Running Experiments
+## Reproducing the results
 
 To replicate the GP model training experiment with the implemented kernels:
 
