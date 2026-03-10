@@ -1,7 +1,6 @@
-
-
 http://archive.ics.uci.edu/ml/datasets/energy+efficiency
 
 http://www.cs.toronto.edu/~delve/data/datasets.html
 ftp://ftp.cs.toronto.edu/pub/neuron/delve/data/tarfiles/kin-family/
 
+Source of this package: https://github.com/RussellTsuchida/ELU_GELU_kernels
